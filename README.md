@@ -55,6 +55,10 @@ dotnet build
 dotnet aspnet-codegenerator controller -name ItemsController -async -api -m Item -dc ItemsContext -outDir Controllers
 ```
 
+### Swagger Screen
+![Services](SwaggerOutput.jpg)
+
+
 
 
 <sub>You can use SQLite browser to inspect items table. SQLite Browser: https://sqlitebrowser.org/</sub>

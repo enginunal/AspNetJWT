@@ -1,38 +1,123 @@
-winget install Microsoft.DotNet.SDK.7
-dotnet dev-certs https --trust
-dotnet tool install -g dotnet-aspnet-codegenerator
+https://github.com/enginunal/AspNetJWT/tree/webapi-base
 
 
-mkdir AspNetJWT
-cd AspNetJWT
-dotnet new webapi
-code .
+dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 7.0.10
+dotnet add package System.IdentityModel.Tokens.Jwt --version 6.32.2
 
-dotnet add package Microsoft.EntityFrameworkCore --version 7.0.10
-dotnet add package Microsoft.EntityFrameworkCore.Design --version 7.0.10
-dotnet add package Microsoft.EntityFrameworkCore.Tools --version 7.0.10
-dotnet add package Microsoft.EntityFrameworkCore.Sqlite --version 7.0.10
-dotnet add package Microsoft.EntityFrameworkCore.SqlServer --version 7.0.10
-dotnet add package Microsoft.VisualStudio.Web.CodeGeneration.Design --version 7.0.9
 
-Entities>Item.cs
-Infrastructure>ItemsContext.cs
-Program.cs>
-builder.Services.AddDbContext<ItemsContext>(opt => 
-    opt.UseSqlite(builder.Configuration.GetConnectionString("ItemsConnection")  ));
-appsettings.json>
-"ConnectionStrings": {
-    "ItemsConnection": "Data Source=ItemsDb.db"
+apsettings>
+  "JwtTokenOptions": {
+    "Issuer": "Server1",
+    "Audience": "Aud1",
+    "SigningKey": "simetrik sifreleme anahtari kullanacagiz",
+    "Expiration": 3600
   }
 
-dotnet build
+program.cs>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(opts =>
+    {
+        byte[] signingKey = Encoding.UTF8
+        	.GetBytes(builder.Configuration.GetSection("JwtTokenOptions")["SigningKey"]);
 
-dotnet aspnet-codegenerator controller -name ItemsController -async -api -m Item -dc ItemsContext -outDir Controllers
+        opts.TokenValidationParameters = new TokenValidationParameters
+        {            
+            ValidIssuer = builder.Configuration.GetSection("JwtTokenOptions")["Issuer"],
+            ValidAudience = builder.Configuration.GetSection("JwtTokenOptions")["Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(signingKey)
+        };
+    });
+builder.Services.AddAuthorization();
 
-https://sqlitebrowser.org/
+ve
 
-EnsureCreated
-OnModelCreating --> Seed
+app.UseAuthentication();//for jwt usage
+app.UseAuthorization();
+
+
+dotnet aspnet-codegenerator controller -name TokenController -async -api -outDir Controllers
+
+TokenController.cs>
+[HttpGet("{pwd}")]
+        public async Task<IActionResult> GetToken(string pwd)
+        {
+            if (pwd != "123") return Unauthorized("Şifre geçersiz.");
+
+            var keyBytes = Encoding.UTF8.GetBytes(_config.GetSection("JwtTokenOptions")["SigningKey"]);
+            var symmetricKey = new SymmetricSecurityKey(keyBytes);
+
+            var signingCredentials = new SigningCredentials(
+                symmetricKey,
+                SecurityAlgorithms.HmacSha256);
+
+            var claims = new List<Claim>()
+            {
+                new Claim("sub", "eunal"),
+                new Claim("name", "engin unal")                
+            };
+
+            var roleClaims = new List<Claim>()
+            {
+                new Claim("role", "readers"),
+                new Claim("role", "writers"),
+            };
+
+            claims.AddRange(roleClaims);
+
+            var token = new JwtSecurityToken(
+                issuer: _config.GetSection("JwtTokenOptions")["Issuer"],
+                audience: _config.GetSection("JwtTokenOptions")["Audience"],
+                claims: claims,
+                expires: DateTime.Now.Add(TimeSpan.Parse(_config.GetSection("JwtTokenOptions")["Expiration"])),
+                signingCredentials: signingCredentials);
+
+            var tokenData = new JwtSecurityTokenHandler().WriteToken(token);
+            return Ok(tokenData);
+        }
+
+
+Program.cs>
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "AspNetJWT", Version = "1.0" });
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description =
+            "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 12345abcdef\""
+    });
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] { }
+        }
+    });
+});
+
+ItemsController.cs>
+[Authorize]
+
+
+// For Audience sample 
+
+
+
+
+
+
+
 
 
 

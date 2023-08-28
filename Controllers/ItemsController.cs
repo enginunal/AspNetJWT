@@ -1,15 +1,12 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AspNetJWT.Entities;
 using AspNetJWT.Infrastructure;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AspNetJWT.Controllers
 {
+    [Authorize]
     [Route("api/[controller]/[action]")]
     [ApiController]
     public class ItemsController : ControllerBase
@@ -21,7 +18,7 @@ namespace AspNetJWT.Controllers
             _context = context;
         }
 
-        // GET: api/Items
+        // GET: api/Items        
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Item>>> GetItems()
         {

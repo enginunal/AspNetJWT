@@ -1,6 +1,6 @@
-# AspNetJWT - WebApi Base
+# AspNetJWT 
 
-### Preparing dev env
+## WebApi Base - Preparing dev env
 
 Required tools and cert settings:
 ```
@@ -61,6 +61,11 @@ dotnet aspnet-codegenerator controller -name ItemsController -async -api -m Item
 
 > <sub>You can use SQLite browser to inspect items table. SQLite Browser: https://sqlitebrowser.org/</sub><br/>
 > <sub>Base WebApi sample Project is on the webapi-base branch: https://github.com/enginunal/AspNetJWT/tree/webapi-base</sub>
+
+</br>
+
+## WebApi JWT Token HMAC256 Sample 
+
 
 Packages:
 ```

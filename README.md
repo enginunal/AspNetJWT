@@ -183,6 +183,8 @@ ItemsController.cs->
 [Authorize]
 ```
 
+### Swagger Screen
+![Services](SwaggerOutput_HMAC256.jpg)
 
 
 

@@ -1,3 +1,5 @@
+> You can find symmetric or asymmetric key code samples in this repo's branches
+
 # AspNetJWT 
 
 ## WebApi Base - Preparing dev env

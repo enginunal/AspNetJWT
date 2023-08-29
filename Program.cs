@@ -1,4 +1,4 @@
-using System.Text;
+using System.Security.Cryptography;
 using AspNetJWT.Infrastructure;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -12,17 +12,17 @@ builder.Services.AddControllers();
 builder.Services.AddDbContext<ItemsContext>(opt =>
     opt.UseSqlite(builder.Configuration.GetConnectionString("ItemsConnection")));
 
+var rsa = RSA.Create();
+rsa.ImportRSAPublicKey(Convert.FromBase64String(builder.Configuration["JwtTokenOptions:PublicKey"]), out _);
+
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(opts =>
     {
-        byte[] signingKey = Encoding.UTF8
-            .GetBytes(builder.Configuration.GetSection("JwtTokenOptions")["SigningKey"]);
-
         opts.TokenValidationParameters = new TokenValidationParameters
         {
-            ValidIssuer = builder.Configuration.GetSection("JwtTokenOptions")["Issuer"],
-            ValidAudience = builder.Configuration.GetSection("JwtTokenOptions")["Audience"],
-            IssuerSigningKey = new SymmetricSecurityKey(signingKey)
+            ValidIssuer = builder.Configuration["JwtTokenOptions:Issuer"],
+            ValidAudience = builder.Configuration["JwtTokenOptions:Audience"],
+            IssuerSigningKey = new RsaSecurityKey(rsa)
         };
     });
 builder.Services.AddAuthorization();
@@ -70,7 +70,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();//for jwt usage
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

@@ -25,7 +25,7 @@ public class ItemsContext : DbContext
             }
         );
 
-        modelBuilder.Entity<Item>().HasData(            
+        modelBuilder.Entity<Item>().HasData(
             new Item
             {
                 Id = Guid.NewGuid(),

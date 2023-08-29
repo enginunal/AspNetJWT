@@ -7,7 +7,7 @@ https://github.com/enginunal/AspNetJWT/tree/webapi-jwt-symmetric-hmac</br>
 #### PS256 - (RSASSA PSA SHA-256) Asymmetric Key Sample:</br>
 https://github.com/enginunal/AspNetJWT/tree/webapi-jwt-asymmetric-ps256</br>
 
-# AspNetJWT 
+# AspNetJWT - HMAC256 Sample
 
 ## WebApi Base - Preparing dev env
 

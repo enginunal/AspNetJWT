@@ -1,4 +1,11 @@
-> You can find symmetric or asymmetric key code samples in this repo's branches
+### You can find symmetric or asymmetric key code samples in this repo's branches
+
+#### Web Api Base:</br>
+https://github.com/enginunal/AspNetJWT/tree/webapi-base</br>
+#### HMAC Symmetric Key Sample:</br>
+https://github.com/enginunal/AspNetJWT/tree/webapi-jwt-symmetric-hmac</br>
+#### PS256 - (RSASSA PSA SHA-256) Asymmetric Key Sample:</br>
+https://github.com/enginunal/AspNetJWT/tree/webapi-jwt-asymmetric-ps256</br>
 
 # AspNetJWT 
 
